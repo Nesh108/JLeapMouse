@@ -1,4 +1,4 @@
-package LeapTest;
+package LeapMouse;
 
 /******************************************************************************\
 * Author: Alberto Vaccari
