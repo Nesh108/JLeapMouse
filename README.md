@@ -1,7 +1,7 @@
-LeapMouse
+JLeapMouse
 =========
 
-An implementation of a mouse simulator for LeapMotion.
+An implementation of a mouse simulator for LeapMotion for Java.
 
 Current version:
 
