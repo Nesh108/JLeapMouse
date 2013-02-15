@@ -15,6 +15,8 @@ Future commits:
 
  - Switch Tabs/Apps
  - Copy/Paste/Cut
+ - **Update:** A Gaming Mode - WASD
+
 
 
 In the future, I wish to be able to add gestures and add **Keyboard support**.
