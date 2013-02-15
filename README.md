@@ -20,3 +20,5 @@ Future commits:
 
 
 In the future, I wish to be able to add gestures and add **Keyboard support**.
+
+See this for Java version: https://github.com/Nesh108/PyLeapMouse
