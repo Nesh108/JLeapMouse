@@ -1,5 +1,7 @@
 JLeapMouse
 =========
+Description
+-
 
 An implementation of a mouse simulator for LeapMotion for Java.
 
@@ -17,7 +19,10 @@ Future commits:
  - Copy/Paste/Cut
  - **Update:** A Gaming Mode - WASD
 
-**How to Run**
+In the future, I wish to be able to add gestures and add **Keyboard support**.
+
+How to Run
+-
 
 Requires: LeapJava.jar, _LeapJava.dll, Leap.dll (already included)
 
@@ -27,7 +32,7 @@ Requires: LeapJava.jar, _LeapJava.dll, Leap.dll (already included)
 
 It shouldn't require any other modification.
 
+Python version
+-
 
-In the future, I wish to be able to add gestures and add **Keyboard support**.
-
-See this for Java version: https://github.com/Nesh108/PyLeapMouse
+See this for Python version: https://github.com/Nesh108/PyLeapMouse
