@@ -17,6 +17,15 @@ Future commits:
  - Copy/Paste/Cut
  - **Update:** A Gaming Mode - WASD
 
+**How to Run**
+
+Requires: LeapJava.jar, _LeapJava.dll, Leap.dll (already included)
+
+ - Add LeapJava.jar to the BuildPath
+ - Run the code
+ - Profit (?)
+
+It shouldn't require any other modification.
 
 
 In the future, I wish to be able to add gestures and add **Keyboard support**.
