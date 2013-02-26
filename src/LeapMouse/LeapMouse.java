@@ -24,6 +24,10 @@ class LeapListener extends Listener {
 	//True for Debugging
 	boolean DEBUG = false;
 	
+	//0 = Key Tap 
+	//1 = Finger Tap
+	int CLICK_TYPE = 0;
+	
 	//Just to control the speed, it can be changed accordingly to needs
 	int SLOW = 10;
 	
@@ -41,6 +45,8 @@ class LeapListener extends Listener {
 	boolean Rclicked = false;
 	boolean keystroke = false;
 	boolean LHold = false;
+	
+	boolean Swype = false;
 	
     public void onInit(Controller controller) {
         System.out.println("Initialized");
@@ -63,7 +69,47 @@ class LeapListener extends Listener {
     public void onFrame(Controller controller) {
         // Get the most recent frame and report some basic information
         Frame frame = controller.frame();
-
+        
+        
+        int numGestures = frame.gestures().count();
+        
+        	for (int i=0; i < numGestures; i++) {
+        	    if(frame.gestures().get(i).type() == Gesture.Type.TYPE_KEY_TAP && !Lclicked) {
+                	
+        	    	//If Key Tap Mode enabled 
+        	    	//Left Click
+        	    	if(CLICK_TYPE == 0)
+        	    	{	
+        	    		clickMouse(0);
+                		releaseMouse(0);
+                		Lclicked = true;
+	                    if(DEBUG)
+	                    {
+	                    	System.out.println("LClicked - Key Tap");
+	                    }
+        	    	}
+        	    	
+                	if(DEBUG)
+                		System.out.println("key tap");
+        	    	slow();
+        	    } else if (frame.gestures().get(i).type() == Gesture.Type.TYPE_SWIPE && !Swype) {
+        	    	
+        	    	switchApplication();
+        	    	Swype = true;
+        	    	if(DEBUG)
+        	    		System.out.println("swype");
+        	    	
+        	    	slow();
+        	    }
+        	    else
+        	    {
+        	    	Lclicked = false;
+        	    	Swype = false;
+        	    }
+        	    
+        	  
+        	  }
+        
         if (!frame.fingers().empty()) {
           
             // Get fingers
@@ -84,33 +130,34 @@ class LeapListener extends Listener {
                     avgPos = avgPos.plus(finger.tipPosition());
                 }
                 avgPos = avgPos.divide(fingers.count());
-                System.out.println(avgPos.getZ());
                 moveMouse(avgPos.getX()*15, SCREEN_X - avgPos.getY()*5);
 
-                // Left Click
-                if(fingers.count() == 1 && !Lclicked && avgPos.getZ()>=0)
-                {
-                	clickMouse(0);
-                	releaseMouse(0);
-                	Lclicked = true;
-                	
-                    if(DEBUG)
-                    {
-                    	System.out.println("LClicked");
-                    }
-                	
-                }
-                
-                else if(fingers.count() != 1 || avgPos.getZ()<0)
-                {
-
-                	Lclicked = false;
-                	slow();
-                	
-                }
-                
+               //If Finger Tap Mode enabled 
+               if(CLICK_TYPE == 1){ 
+	               // Left Click
+	               if(fingers.count() == 1 && !Lclicked && avgPos.getZ()<=-70)
+	                {
+	                	clickMouse(0);
+	                	releaseMouse(0);
+	                	Lclicked = true;
+	                	
+	                    if(DEBUG)
+	                    {
+	                    	System.out.println("LClicked  - Finger Tap");
+	                    }
+	                	
+	                }
+	                
+	                else if(fingers.count() != 1 || avgPos.getZ()>0)
+	                {
+	
+	                	Lclicked = false;
+	                	slow();
+	                	
+	                }
+               }
                 // Left Click hold
-                if(fingers.count() == 2 && !LHold && avgPos.getZ()>=0)
+                if(fingers.count() == 2 && !LHold && avgPos.getZ()<=-70)
                 {
                 	clickMouse(0);
                 	LHold = true;
@@ -122,7 +169,7 @@ class LeapListener extends Listener {
                 	
                 }
                 
-                else if(fingers.count() != 2 || avgPos.getZ()<0)
+                else if(fingers.count() != 2 || avgPos.getZ()>0)
                 {
                 	if(LHold)
                 		releaseMouse(0);
@@ -131,8 +178,10 @@ class LeapListener extends Listener {
                 	
                 }
                 
+                
+                
                 // Right Click hold
-                if(fingers.count() == 3 && !Rclicked && avgPos.getZ()>=0)
+                if(fingers.count() == 3 && !Rclicked && avgPos.getZ()<=-70)
                 {
                 	clickMouse(1);
                 	Rclicked = true;
@@ -144,7 +193,7 @@ class LeapListener extends Listener {
 
                 }
                 
-                else if(fingers.count() != 3 ||  avgPos.getZ()<0)
+                else if(fingers.count() != 3 ||  avgPos.getZ()>0)
                 {
                   	if(Rclicked)
                   		releaseMouse(1);
@@ -163,7 +212,7 @@ class LeapListener extends Listener {
                 	Hand hand2 = frame.hands().get(1);
                 	Vector normal2 = hand2.palmNormal();
 	               
-	                if(hand1.fingers().count() >= 5 && !keystroke && avgPos.getZ()>=0 && (normal1.roll() <5 || normal1.roll() > -5) && (normal2.roll() <5 || normal2.roll() > -5))
+	                if(hand1.fingers().count() >= 5 && !keystroke && avgPos.getZ()<=-70 && (normal1.roll() <5 || normal1.roll() > -5) && (normal2.roll() <5 || normal2.roll() > -5))
 	                {
 	                	
 	                	showHideDesktop();
@@ -338,6 +387,10 @@ class LeapListener extends Listener {
     	DEBUG = d;
     }
     
+    public void setClickType(int i){
+    	CLICK_TYPE = i;
+    }
+    
 }
 
 class LeapMouse {
@@ -347,7 +400,8 @@ class LeapMouse {
     	// Create a sample listener and controller
         LeapListener listener = new LeapListener();
         Controller controller = new Controller();
-        
+        controller.enableGesture( Gesture.Type.TYPE_KEY_TAP );
+        controller.enableGesture( Gesture.Type.TYPE_SWIPE );
         System.out.println("Do you want to enable Debug Mode? Y/N (Default: Disabled)");
     	
         try{
@@ -361,6 +415,21 @@ class LeapMouse {
     	    }
     	    else
     	    	System.out.println("Default: Debug Mode Disabled.");
+    	    
+    	    
+    	    System.out.println("Do you want to use Key Tap (0) or Finger Tap (1)? 0/1 (Default: Key Tap)");
+    	    
+    	    if(bufferRead.readLine().equalsIgnoreCase("0"))
+    	    {
+    	    	listener.setClickType(0);
+    	    	System.out.println("Key Tap Enabled.");
+    	    } 
+    	    else if(bufferRead.readLine().equalsIgnoreCase("1"))
+    	    	System.out.println("Finger Tap Disabled.");
+    	    else
+    	    	System.out.println("Default: Key Tap Enabled.");
+    	    	
+    	    
     	}
     	catch(IOException e)
     	{
