@@ -8,21 +8,21 @@ An implementation of a mouse simulator for LeapMotion for Java.
 Current version:
 
  - Mouse Movements
- - Left Click
+ - Left Click (Key Tap and Finger Tap)
  - Left Click drag
  - Right Click
  - Show/Hide Desktop
+ - Switch Tabs/Apps
+ - Added Gestures
 
 Future commits:
 
- - Switch Tabs/Apps
  - Copy/Paste/Cut
  - **Update:** A Gaming Mode - WASD
 
 In the future, I wish to be able to add gestures and add **Keyboard support**.
 
 How to Run
--
 
 Requires: LeapJava.jar, _LeapJava.dll, Leap.dll (already included)
 
