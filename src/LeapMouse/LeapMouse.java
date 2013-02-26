@@ -84,11 +84,11 @@ class LeapListener extends Listener {
                     avgPos = avgPos.plus(finger.tipPosition());
                 }
                 avgPos = avgPos.divide(fingers.count());
-  
+                System.out.println(avgPos.getZ());
                 moveMouse(avgPos.getX()*15, SCREEN_X - avgPos.getY()*5);
 
                 // Left Click
-                if(fingers.count() == 1 && !Lclicked && avgPos.getZ()<=-90)
+                if(fingers.count() == 1 && !Lclicked && avgPos.getZ()>=0)
                 {
                 	clickMouse(0);
                 	releaseMouse(0);
@@ -101,7 +101,7 @@ class LeapListener extends Listener {
                 	
                 }
                 
-                else if(fingers.count() != 1 || avgPos.getZ()>=-90)
+                else if(fingers.count() != 1 || avgPos.getZ()<0)
                 {
 
                 	Lclicked = false;
@@ -110,7 +110,7 @@ class LeapListener extends Listener {
                 }
                 
                 // Left Click hold
-                if(fingers.count() == 2 && !LHold && avgPos.getZ()<=-90)
+                if(fingers.count() == 2 && !LHold && avgPos.getZ()>=0)
                 {
                 	clickMouse(0);
                 	LHold = true;
@@ -122,7 +122,7 @@ class LeapListener extends Listener {
                 	
                 }
                 
-                else if(fingers.count() != 2 || avgPos.getZ()>=-90)
+                else if(fingers.count() != 2 || avgPos.getZ()<0)
                 {
                 	if(LHold)
                 		releaseMouse(0);
@@ -132,7 +132,7 @@ class LeapListener extends Listener {
                 }
                 
                 // Right Click hold
-                if(fingers.count() == 3 && !Rclicked && avgPos.getZ()<=-90)
+                if(fingers.count() == 3 && !Rclicked && avgPos.getZ()>=0)
                 {
                 	clickMouse(1);
                 	Rclicked = true;
@@ -144,7 +144,7 @@ class LeapListener extends Listener {
 
                 }
                 
-                else if(fingers.count() != 3 ||  avgPos.getZ()>-90)
+                else if(fingers.count() != 3 ||  avgPos.getZ()<0)
                 {
                   	if(Rclicked)
                   		releaseMouse(1);
@@ -163,7 +163,7 @@ class LeapListener extends Listener {
                 	Hand hand2 = frame.hands().get(1);
                 	Vector normal2 = hand2.palmNormal();
 	               
-	                if(!keystroke && avgPos.getZ()<=-90 && (normal1.roll() <5 || normal1.roll() > -5) && (normal2.roll() <5 || normal2.roll() > -5))
+	                if(hand1.fingers().count() >= 5 && !keystroke && avgPos.getZ()>=0 && (normal1.roll() <5 || normal1.roll() > -5) && (normal2.roll() <5 || normal2.roll() > -5))
 	                {
 	                	
 	                	showHideDesktop();
