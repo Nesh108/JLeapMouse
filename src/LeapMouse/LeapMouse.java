@@ -70,8 +70,7 @@ class LeapListener extends Listener {
     public void onFrame(Controller controller) {
         // Get the most recent frame and report some basic information
         Frame frame = controller.frame();
-        
-        
+
         int numGestures = frame.gestures().count();
         
         	for (int i=0; i < numGestures; i++) {
@@ -153,8 +152,35 @@ class LeapListener extends Listener {
                     avgPos = avgPos.plus(finger.tipPosition());
                 }
                 avgPos = avgPos.divide(fingers.count());
-                moveMouse(avgPos.getX()*15, SCREEN_X - avgPos.getY()*5);
+              
+                
+                //New Pointing System using first calibrated screen. Thanks to wooster @ freenode IRC
+                ScreenList screens = controller.calibratedScreens();
+                
+                if (screens.empty()) return;
+                Screen s = screens.get(0);
+                PointableList pointables = frame.hands().get(0).pointables();
+                
+                if(pointables.empty()) return;
+                Pointable firstPointable = pointables.get(0);
+                Vector intersection = s.intersect(
+                        firstPointable,
+                        true, // normalize
+                        1.0f // clampRatio
+                        );
 
+		        // if the user is not pointing at the screen all components of
+		        // the returned vector will be Not A Number (NaN)
+		        // isValid() returns true only if all components are finite
+		        if (!intersection.isValid()) return;
+		
+		        float x = s.widthPixels() * intersection.getX();
+		        // flip y coordinate to standard top-left origin
+		        float y = s.heightPixels() * (1.0f - intersection.getY());
+		                
+		
+		        moveMouse(x, y);
+	        
                //If Finger Tap Mode enabled 
                if(CLICK_TYPE == 1){ 
 	               // Left Click
