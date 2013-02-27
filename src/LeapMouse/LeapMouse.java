@@ -28,6 +28,9 @@ class LeapListener extends Listener {
 	//1 = Finger Tap
 	int CLICK_TYPE = 0;
 	
+
+	boolean USE_CALIBRATED_SCREEN = true;
+	
 	//Just to control the speed, it can be changed accordingly to needs
 	int SLOW = 10;
 	
@@ -154,32 +157,38 @@ class LeapListener extends Listener {
                 avgPos = avgPos.divide(fingers.count());
               
                 
-                //New Pointing System using first calibrated screen. Thanks to wooster @ freenode IRC
-                ScreenList screens = controller.calibratedScreens();
-                
-                if (screens.empty()) return;
-                Screen s = screens.get(0);
-                PointableList pointables = frame.hands().get(0).pointables();
-                
-                if(pointables.empty()) return;
-                Pointable firstPointable = pointables.get(0);
-                Vector intersection = s.intersect(
-                        firstPointable,
-                        true, // normalize
-                        1.0f // clampRatio
-                        );
-
-		        // if the user is not pointing at the screen all components of
-		        // the returned vector will be Not A Number (NaN)
-		        // isValid() returns true only if all components are finite
-		        if (!intersection.isValid()) return;
-		
-		        float x = s.widthPixels() * intersection.getX();
-		        // flip y coordinate to standard top-left origin
-		        float y = s.heightPixels() * (1.0f - intersection.getY());
-		                
-		
-		        moveMouse(x, y);
+                if(USE_CALIBRATED_SCREEN){
+	                //New Pointing System using first calibrated screen. Thanks to wooster @ freenode IRC
+	                ScreenList screens = controller.calibratedScreens();
+	                
+	                if (screens.empty()) return;
+	                Screen s = screens.get(0);
+	                PointableList pointables = frame.hands().get(0).pointables();
+	                
+	                if(pointables.empty()) return;
+	                Pointable firstPointable = pointables.get(0);
+	                Vector intersection = s.intersect(
+	                        firstPointable,
+	                        true, // normalize
+	                        1.0f // clampRatio
+	                        );
+	
+			        // if the user is not pointing at the screen all components of
+			        // the returned vector will be Not A Number (NaN)
+			        // isValid() returns true only if all components are finite
+			        if (!intersection.isValid()) return;
+			
+			        float x = s.widthPixels() * intersection.getX();
+			        // flip y coordinate to standard top-left origin
+			        float y = s.heightPixels() * (1.0f - intersection.getY());
+			        moveMouse(x, y);
+			        
+                } else
+                {
+                    moveMouse(avgPos.getX()*15, SCREEN_X - avgPos.getY()*5);
+                }
+			
+		        
 	        
                //If Finger Tap Mode enabled 
                if(CLICK_TYPE == 1){ 
@@ -480,6 +489,9 @@ class LeapListener extends Listener {
     	CLICK_TYPE = i;
     }
     
+    public void setCalibratedScren(boolean d){
+    	USE_CALIBRATED_SCREEN = d;
+    }
 }
 
 class LeapMouse {
@@ -502,20 +514,29 @@ class LeapMouse {
     	    if(bufferRead.readLine().equalsIgnoreCase("Y"))
     	    {
     	    	listener.setDebug(true);
-    	    	System.out.println("Debug Mode Enabled.");
+    	    	System.out.println("Debug Mode Enabled.\n");
     	    }
     	    else
-    	    	System.out.println("Default: Debug Mode Disabled.");
+    	    	System.out.println("Default: Debug Mode Disabled.\n");
     	    
     	    
     	    System.out.println("Do you want to use Key Tap (0) or Finger Tap (1)? 0/1 (Default: Key Tap)");
     	    
     	    if(bufferRead.readLine().equals("1")){
     	    	listener.setClickType(1);
-    	    	System.out.println("Finger Tap Disabled.");
+    	    	System.out.println("Finger Tap Disabled.\n");
     	    }
     	    else
-    	    	System.out.println("Default: Key Tap Enabled.");
+    	    	System.out.println("Default: Key Tap Enabled.\n");
+    	    
+    	    System.out.println("Do you want to use Calibrated Screen for pointing (Leap must be calibrated)? - Supports only 1 Screen - Y/N (Default: Calibrated Screen)");
+    	    
+    	    if(bufferRead.readLine().equalsIgnoreCase("N")){
+    	    	listener.setCalibratedScren(false);
+    	    	System.out.println("Using Leap Relative Positioning.\n");
+    	    }
+    	    else
+    	    	System.out.println("Default: Using Calibrated Screen.\n");
     	    	
     	    
     	}
