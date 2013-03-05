@@ -185,7 +185,7 @@ class LeapListener extends Listener {
 			        
                 } else
                 {
-                    moveMouse(avgPos.getX()*15, SCREEN_X - avgPos.getY()*5);
+                    moveMouse(avgPos.getX()*15, SCREEN_Y - avgPos.getY()*5);
                 }
 			
 		        
